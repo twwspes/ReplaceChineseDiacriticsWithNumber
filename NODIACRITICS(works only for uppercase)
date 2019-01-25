@@ -1,0 +1,134 @@
+
+Public Function NODIACRITICS(inp As String)
+
+    Dim pinyins() As String
+    pinyins() = Split(inp, ",")
+
+    Dim cnt As Integer
+    cnt = UBound(pinyins) + 1
+    
+    Dim outChar() As String
+    Dim unic() As Integer
+    Dim unicStr() As String
+    Dim diacriticCode As Integer
+    
+    Dim j As Integer, i As Integer
+    j = 1
+    
+    ReDim outChar(0 To cnt - 1)
+    
+    For j = 1 To cnt
+        
+        Dim noOfChar As Integer
+        noOfChar = Len(pinyins(j - 1))
+        diacriticCode = 0
+
+        ReDim unic(0 To noOfChar - 1)
+        ReDim unicStr(0 To noOfChar - 1)
+        
+        For i = 1 To noOfChar
+        
+            unic(i - 1) = AscW(Mid(pinyins(j - 1), i, 1))
+            
+            If unic(i - 1) = 256 Or unic(i - 1) = 193 Or unic(i - 1) = 461 Or unic(i - 1) = 192 Then
+                diacriticCode = unic(i - 1)
+                unic(i - 1) = AscW("A")
+            End If
+            If unic(i - 1) = 274 Or unic(i - 1) = 201 Or unic(i - 1) = 282 Or unic(i - 1) = 200 Then
+                diacriticCode = unic(i - 1)
+                unic(i - 1) = AscW("E")
+            End If
+            If unic(i - 1) = 298 Or unic(i - 1) = 205 Or unic(i - 1) = 463 Or unic(i - 1) = 204 Then
+                diacriticCode = unic(i - 1)
+                unic(i - 1) = AscW("I")
+            End If
+            If unic(i - 1) = 332 Or unic(i - 1) = 211 Or unic(i - 1) = 465 Or unic(i - 1) = 210 Then
+                diacriticCode = unic(i - 1)
+                unic(i - 1) = AscW("O")
+            End If
+            If unic(i - 1) = 362 Or unic(i - 1) = 218 Or unic(i - 1) = 467 Or unic(i - 1) = 217 Then
+                diacriticCode = unic(i - 1)
+                unic(i - 1) = AscW("U")
+            End If
+            If unic(i - 1) = 469 Or unic(i - 1) = 471 Or unic(i - 1) = 473 Or unic(i - 1) = 475 Then
+                diacriticCode = unic(i - 1)
+                unic(i - 1) = AscW("Ü")
+            End If
+            
+            'unicStr(i - 1) = CStr(unic(i - 1))
+            
+            unicStr(i - 1) = ChrW(unic(i - 1))
+            
+            'unic(i - 1) = "A"
+            
+            'NODIACRITICS = unic(i - 1)
+        
+        Next i
+        
+        outChar(j - 1) = Join(unicStr, "")
+        
+        If diacriticCode <> 0 Then
+            
+            If diacriticCode = 256 Or diacriticCode = 274 Or diacriticCode = 298 Or diacriticCode = 332 Or diacriticCode = 362 Or diacriticCode = 469 Then
+                outChar(j - 1) = outChar(j - 1) & "1"
+            End If
+            If diacriticCode = 193 Or diacriticCode = 201 Or diacriticCode = 205 Or diacriticCode = 211 Or diacriticCode = 218 Or diacriticCode = 471 Then
+                outChar(j - 1) = outChar(j - 1) & "2"
+            End If
+            If diacriticCode = 461 Or diacriticCode = 282 Or diacriticCode = 463 Or diacriticCode = 465 Or diacriticCode = 467 Or diacriticCode = 473 Then
+                outChar(j - 1) = outChar(j - 1) & "3"
+            End If
+            If diacriticCode = 192 Or diacriticCode = 200 Or diacriticCode = 204 Or diacriticCode = 210 Or diacriticCode = 217 Or diacriticCode = 475 Then
+                outChar(j - 1) = outChar(j - 1) & "4"
+            End If
+        End If
+        
+    Next j
+    
+    'NODIACRITICS = Join(outChar, ",")
+    
+    Dim eleArr_1 As String
+    Dim eleArr_() As String
+    
+    eleArr_() = Split(Join(outChar, "0,"), ",")
+    
+    Dim Array_2() As String
+    Dim x As Integer
+    x = 0
+    Dim k As Integer
+    k = 0
+    On Error Resume Next
+    
+    If cnt = 1 Then
+    
+    ReDim Preserve Array_2(x)
+    Array_2(x) = eleArr_(0)
+    
+    Else
+    
+    For k = 0 To cnt - 2
+    
+        eleArr_1 = eleArr_(0)
+        
+        For n = 0 To UBound(eleArr_) - 1
+            eleArr_(n) = eleArr_(n + 1)
+        Next n
+        
+        ReDim Preserve eleArr_(UBound(eleArr_) - 1)
+        
+        If UBound(Filter(eleArr_(), eleArr_1)) = -1 Then
+            ReDim Preserve Array_2(x)
+            Array_2(x) = eleArr_1
+            x = x + 1
+        End If
+    Next k
+    
+    ReDim Preserve Array_2(x)
+    Array_2(x) = eleArr_(0)
+    
+    End If
+    
+    NODIACRITICS = Join(Split(Join(Array_2(), ","), "0,"), ",")
+
+End Function
+
